@@ -1,0 +1,45 @@
+// ****** SELECT ITEMS **********
+const alert = document.querySelector(".alert");
+const form = document.querySelector(".grocery-form");
+const grocery = document.querySelector("#grocery");
+const submitBtn = document.querySelector("submit-btn");
+const container = document.querySelector(".grocery-container");
+const list = document.querySelector(".grocery-list");
+const clearBtn = document.querySelector(".clear-btn");
+// edit option
+let editElement;
+let editFlag = false;
+let editID = "";
+// ****** EVENT LISTENERS **********
+//submit form
+form.addEventListener("submit", addItem);
+// ****** FUNCTIONS **********
+function addItem(e) {
+  e.preventDefault();
+  const value = grocery.value;
+  //用日期转换为string，得到的字符串unique
+  const id = new Date().getTime().toString();
+  //   if(value !== '' && editFlag === false){ }
+  if (value && !editFlag) {
+    console.log("add to the list");
+  }
+  //   else if(value !=='' && editFlag === true){}
+  else if (value && editFlag) {
+    console.log("editing");
+  } else {
+    displayAlert("please enter value", "danger");
+  }
+}
+//display alert
+function displayAlert(text, action) {
+  alert.textContent = text;
+  alert.classList.add(`alert-${action}`);
+  //让alert持续一段时间后自己关掉
+  setTimeout(function () {
+    alert.textContent = "";
+    alert.classList.remove(`alert-${action}`);
+  }, 1000);
+}
+// ****** LOCAL STORAGE **********
+
+// ****** SETUP ITEMS **********
