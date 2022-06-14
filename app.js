@@ -15,6 +15,8 @@ let editID = "";
 form.addEventListener("submit", addItem);
 //clear items
 clearBtn.addEventListener("click", clearItems);
+//load items
+window.addEventListener("DOMContentLoaded", setupItems);
 // ****** FUNCTIONS **********
 function addItem(e) {
   e.preventDefault();
@@ -93,7 +95,7 @@ function clearItems() {
   //操作页面初始化
   setBackToDefault();
   //将list从localStorage中删除
-  // localStorage.removeItem('list');
+  localStorage.removeItem("list");
 }
 // delete function
 function deleteItem(e) {
@@ -109,7 +111,7 @@ function deleteItem(e) {
   //初始化
   setBackToDefault();
   //remove from local storage
-  // removeFromLocalSotrage(id);
+  removeFromLocalSotrage(id);
 }
 //edit function
 function editItem(e) {
@@ -131,12 +133,97 @@ function setBackToDefault() {
 }
 // ****** LOCAL STORAGE **********
 function addToLocalStorage(id, value) {
-  console.log("added to local storage");
+  // const grocery = {id:id,value:value};
+  const grocery = { id, value };
+  let items = getLocalStorage();
+  console.log(items);
+  items.push(grocery);
+  localStorage.setItem("list", JSON.stringify(items));
 }
 function removeFromLocalSotrage(id) {
-  console.log("deleted from local storage");
+  //从localStorage中读取现有array，凭ID将要删除的item筛掉，返回新array
+  let items = getLocalStorage();
+  items = items.filter(function (item) {
+    if (item.id !== id) {
+      return item;
+    }
+  });
+  //将新array存入localStorage
+  localStorage.setItem("list", JSON.stringify(items));
 }
 function editLocalStorage(id, value) {
-  console.log("edit local storage");
+  //editID和建立item时存入的data-id是一样的
+  let items = getLocalStorage();
+  items = items.map(function (item) {
+    if (item.id === id) {
+      item.value = value;
+    }
+    return item;
+  });
+  localStorage.setItem("list", JSON.stringify(items));
+}
+function getLocalStorage() {
+  return localStorage.getItem("list")
+    ? JSON.parse(localStorage.getItem("list"))
+    : [];
 }
 // ****** SETUP ITEMS **********
+function setupItems() {
+  let items = getLocalStorage();
+  if (items.length > 0) {
+    //创建list中的item
+    items.forEach(function (item) {
+      const element = document.createElement("article");
+      //添加class
+      element.classList.add("grocery-item");
+      //添加id
+      const attribute = document.createAttribute("data-id");
+      attribute.value = item.id;
+      element.setAttributeNode(attribute);
+      element.innerHTML = `<p class="title">${item.value}</p>
+            <div class="btn-container">
+              <button type="button" class="edit-btn">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button type="button" class="delete-btn">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>`;
+      //在这里access btns才有效。
+      const deleteBtn = element.querySelector(".delete-btn");
+      const editBtn = element.querySelector(".edit-btn");
+      deleteBtn.addEventListener("click", deleteItem);
+      editBtn.addEventListener("click", editItem);
+      // append child（这一步用来display，只有放在HTML中才能看见）
+      list.appendChild(element);
+      //show container（添加解除hidden的class）
+      container.classList.add("show-container");
+    });
+  }
+}
+/***或将创建element单独做个function，哪里要用就在哪invoke***/
+// function creatListItem(id,value){
+//       const element = document.createElement("article");
+//       //添加class
+//       element.classList.add("grocery-item");
+//       //添加id
+//       const attribute = document.createAttribute("data-id");
+//       attribute.value = id;
+//       element.setAttributeNode(attribute);
+//       element.innerHTML = `<p class="title">${value}</p>
+//             <div class="btn-container">
+//               <button type="button" class="edit-btn">
+//                 <i class="fas fa-edit"></i>
+//               </button>
+//               <button type="button" class="delete-btn">
+//                 <i class="fas fa-trash"></i>
+//               </button>
+//             </div>`;
+//       //在这里access btns才有效。
+//       const deleteBtn = element.querySelector(".delete-btn");
+//       const editBtn = element.querySelector(".edit-btn");
+//       deleteBtn.addEventListener("click", deleteItem);
+//       editBtn.addEventListener("click", editItem);
+//       // append child（这一步用来display，只有放在HTML中才能看见）
+//       list.appendChild(element);
+// }
