@@ -58,7 +58,11 @@ function addItem(e) {
   }
   //   else if(value !=='' && editFlag === true){}
   else if (value && editFlag) {
-    console.log("editing");
+    editElement.innerHTML = value;
+    displayAlert("value changed", "success");
+    //edit local sotrage
+    editLocalStorage(editID, value);
+    setBackToDefault();
   } else {
     displayAlert("please enter value", "danger");
   }
@@ -92,12 +96,31 @@ function clearItems() {
   // localStorage.removeItem('list');
 }
 // delete function
-function deleteItem() {
-  console.log("item deleted");
+function deleteItem(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  const id = element.dataset.id;
+  list.removeChild(element);
+  //如果删空了，隐藏container
+  if (list.children.length === 0) {
+    container.classList.remove("show-container");
+  }
+  //操作后用alert对用户进行提示
+  displayAlert("item removed", "success");
+  //初始化
+  setBackToDefault();
+  //remove from local storage
+  // removeFromLocalSotrage(id);
 }
 //edit function
-function editItem() {
-  console.log("edit item");
+function editItem(e) {
+  const element = e.currentTarget.parentElement.parentElement;
+  //set edit item：指<p></p>
+  editElement = e.currentTarget.parentElement.previousElementSibling;
+  //set form value
+  grocery.value = editElement.innerHTML;
+  editFlag = true;
+  editID = element.dataset.id;
+  submitBtn.textContent = "edit";
 }
 //set back to default
 function setBackToDefault() {
@@ -109,5 +132,11 @@ function setBackToDefault() {
 // ****** LOCAL STORAGE **********
 function addToLocalStorage(id, value) {
   console.log("added to local storage");
+}
+function removeFromLocalSotrage(id) {
+  console.log("deleted from local storage");
+}
+function editLocalStorage(id, value) {
+  console.log("edit local storage");
 }
 // ****** SETUP ITEMS **********
